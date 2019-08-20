@@ -1,0 +1,66 @@
+<!doctype html>
+<title>Example</title>
+<style>
+  * {
+    box-sizing: border-box; 
+  }
+  body {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: row;
+    margin: 0;
+  }
+  .col-1 {
+    background: yellowgreen;
+    flex: 1;
+  }
+  .col-2 {
+    display: flex;
+    flex-direction: column;
+    flex: 5;
+  }
+  .content {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .content > article {
+    flex: 4;
+    min-height: 60vh;
+    margin: 5px;
+    border: 1px solid black;
+    border-radius: 5px;
+    flex-direction: row;
+  }
+  header, footer {
+    background: yellowgreen;
+    height: 20vh;
+  }
+  header, footer, article, nav {
+    padding: 1em;
+  }
+</style>
+
+<script src="onnx.min.js"></script>
+<script src="ndarray-browser-min.js"></script>
+<script src="index.js"></script>
+
+<body>
+    <nav class="col-1">
+        <h3>Neural Compression Correction</h3>
+        Add images either by URL or by loading from local file. Once an image is loaded, choose the action under the image. Once the action is complete, the new image will be loaded. You can then continue to apply actions to that image.
+        <h4>Actions</h4>
+        <h5>Correct Compression</h5>
+        Attempts to undue the damage done by lossy compression.
+        <h5>"Enhance"</h5>
+        Doubles the resolution of the image and then applies the "Correct Compression" action.
+    </nav>
+  <div class="col-2">
+  	<header>
+        <h4>Add Images</h4>
+        <input type="file" onchange="onFileSelected(event)">
+    </header>
+    <main id="main" class="content">
+    </main>
+  	
+  </div>
+</body>
