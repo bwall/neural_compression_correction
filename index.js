@@ -5,16 +5,20 @@ async function processImgPortion(imgdata, xo, yo)
     var raw_to_process = new Float32Array(3 * modelImgSize * modelImgSize).fill(0.0);
     var to_process = ndarray(raw_to_process, [3, modelImgSize, modelImgSize]);
 
-    var top_i = Math.min(modelImgSize, imgdata.shape[1] - xo);
-    var top_y = Math.min(modelImgSize, imgdata.shape[0] - yo);
+    var top_i = Math.min(modelImgSize, imgdata.shape[1] - xo) - 1;
+    var top_y = Math.min(modelImgSize, imgdata.shape[0] - yo) - 1;
 
-    for(var i = 0; i < top_i; ++i) 
+    var x = 0;
+    var y = 0;
+    for(var i = 0; i < modelImgSize; ++i) 
     {
-        for(var j = 0; j < top_y; ++j) 
+        for(var j = 0; j < modelImgSize; ++j) 
         {
-            to_process.set(0, i, j, imgdata.get(yo + j, xo + i, 0) / 255.0);
-            to_process.set(1, i, j, imgdata.get(yo + j, xo + i, 1) / 255.0);
-            to_process.set(2, i, j, imgdata.get(yo + j, xo + i, 2) / 255.0);
+            x = Math.min(i, top_i);
+            y = Math.min(j, top_y);
+            to_process.set(0, x, y, imgdata.get(yo + y, xo + x, 0) / 255.0);
+            to_process.set(1, x, y, imgdata.get(yo + y, xo + x, 1) / 255.0);
+            to_process.set(2, x, y, imgdata.get(yo + y, xo + x, 2) / 255.0);
         }
     }
 
@@ -24,10 +28,11 @@ async function processImgPortion(imgdata, xo, yo)
     var outputMap = await session.run([inputTensor]);
     var outputData = ndarray(outputMap.values().next().value.data, [3, modelImgSize, modelImgSize]);
 
-    for(var i = 0; i < top_i; ++i) 
+    for(var i = 0; i <= top_i; ++i) 
     {
-        for(var j = 0; j < top_y; ++j) 
+        for(var j = 0; j <= top_y; ++j) 
         {
+
             imgdata.set(yo + j, xo + i, 0, outputData.get(0, i, j) * 255);
             imgdata.set(yo + j, xo + i, 1, outputData.get(1, i, j) * 255);
             imgdata.set(yo + j, xo + i, 2, outputData.get(2, i, j) * 255);
