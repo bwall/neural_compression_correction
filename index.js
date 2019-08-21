@@ -2,7 +2,7 @@ const modelImgSize = 128;
 
 async function processImgPortion(imgdata, xo, yo)
 {
-    var raw_to_process = new Float32Array(3 * modelImgSize * modelImgSize).fill(1.0);
+    var raw_to_process = new Float32Array(3 * modelImgSize * modelImgSize).fill(0.0);
     var to_process = ndarray(raw_to_process, [3, modelImgSize, modelImgSize]);
 
     var top_i = Math.min(modelImgSize, imgdata.shape[1] - xo);
