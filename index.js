@@ -16,9 +16,9 @@ async function processImgPortion(imgdata, xo, yo)
         {
             x = Math.min(i, top_i);
             y = Math.min(j, top_y);
-            to_process.set(0, x, y, imgdata.get(yo + y, xo + x, 0) / 255.0);
-            to_process.set(1, x, y, imgdata.get(yo + y, xo + x, 1) / 255.0);
-            to_process.set(2, x, y, imgdata.get(yo + y, xo + x, 2) / 255.0);
+            to_process.set(0, i, j, imgdata.get(yo + y, xo + x, 0) / 255.0);
+            to_process.set(1, i, j, imgdata.get(yo + y, xo + x, 1) / 255.0);
+            to_process.set(2, i, j, imgdata.get(yo + y, xo + x, 2) / 255.0);
         }
     }
 
