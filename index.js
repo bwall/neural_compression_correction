@@ -135,6 +135,25 @@ function createImgDisplay()
 
 async function runNeuralCompressionCorrection(image_id, scale, model_name) 
 {
+    var imgid = createImgDisplay();
+    var imgtag = document.getElementById(imgid);
+
+    var sourceimage = document.getElementById(image_id);
+    sourceimage.crossOrigin = "Anonymous";
+    var canvas = document.createElement('canvas');
+    canvas.height = canvas.width = 0;
+    var imgwidth = sourceimage.offsetWidth * scale;
+    var imgheight = sourceimage.offsetHeight * scale;
+
+    canvas.height = imgheight;
+    canvas.width = imgwidth;
+    context = canvas.getContext('2d');
+    context.drawImage(sourceimage, 0, 0, imgwidth, imgheight);
+    const imageData = context.getImageData(0, 0, imgwidth, imgheight);
+
+    var dataFromImage = ndarray(new Uint8ClampedArray(imageData.data), [imgheight, imgwidth, 4]);
+    var imgstep = modelImgSize - 8;
+    
     var modelData = -1;
     if(model_name == "dn4")
     {
@@ -160,24 +179,6 @@ async function runNeuralCompressionCorrection(image_id, scale, model_name)
         }
         modelData = modelData_dn2;
     }
-    var imgid = createImgDisplay();
-    var imgtag = document.getElementById(imgid);
-
-    var sourceimage = document.getElementById(image_id);
-    sourceimage.crossOrigin = "Anonymous";
-    var canvas = document.createElement('canvas');
-    canvas.height = canvas.width = 0;
-    var imgwidth = sourceimage.offsetWidth * scale;
-    var imgheight = sourceimage.offsetHeight * scale;
-
-    canvas.height = imgheight;
-    canvas.width = imgwidth;
-    context = canvas.getContext('2d');
-    context.drawImage(sourceimage, 0, 0, imgwidth, imgheight);
-    const imageData = context.getImageData(0, 0, imgwidth, imgheight);
-
-    var dataFromImage = ndarray(new Uint8ClampedArray(imageData.data), [imgheight, imgwidth, 4]);
-    var imgstep = modelImgSize - 8;
 
     for(var xo = 0; xo < imgwidth; xo += imgstep)
     {
