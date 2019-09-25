@@ -31,8 +31,34 @@ var modelData_dn2 = -1;
 var modelData_dn0 = -1;
 
 
-async function processImgPortion(imgdata, xo, yo, modelData)
+async function processImgPortion(imgdata, xo, yo, model_name)
 {
+    var modelData = -1;
+    if(model_name == "dn4")
+    {
+        if(modelData_dn4 == -1)
+        {
+            modelData_dn4 = await makeRequest("GET", "./g.dn4.onnx"); 
+        }
+        modelData = modelData_dn4;
+    }
+    if(model_name == "dn0")
+    {
+        if(modelData_dn0 == -1)
+        {
+            modelData_dn0 = await makeRequest("GET", "./g.dn0.onnx"); 
+        }
+        modelData = modelData_dn0;
+    }
+    if(model_name == "dn2")
+    {
+        if(modelData_dn2 == -1)
+        {
+            modelData_dn2 = await makeRequest("GET", "./g.dn2.onnx"); 
+        }
+        modelData = modelData_dn2;
+    }
+    
     var raw_to_process = new Float32Array(3 * modelImgSize * modelImgSize).fill(0.0);
     var to_process = ndarray(raw_to_process, [3, modelImgSize, modelImgSize]);
 
@@ -153,38 +179,12 @@ async function runNeuralCompressionCorrection(image_id, scale, model_name)
 
     var dataFromImage = ndarray(new Uint8ClampedArray(imageData.data), [imgheight, imgwidth, 4]);
     var imgstep = modelImgSize - 8;
-    
-    var modelData = -1;
-    if(model_name == "dn4")
-    {
-        if(modelData_dn4 == -1)
-        {
-            modelData_dn4 = await makeRequest("GET", "./g.dn4.onnx"); 
-        }
-        modelData = modelData_dn4;
-    }
-    if(model_name == "dn0")
-    {
-        if(modelData_dn0 == -1)
-        {
-            modelData_dn0 = await makeRequest("GET", "./g.dn0.onnx"); 
-        }
-        modelData = modelData_dn0;
-    }
-    if(model_name == "dn2")
-    {
-        if(modelData_dn2 == -1)
-        {
-            modelData_dn2 = await makeRequest("GET", "./g.dn2.onnx"); 
-        }
-        modelData = modelData_dn2;
-    }
 
     for(var xo = 0; xo < imgwidth; xo += imgstep)
     {
         for(var yo = 0; yo < imgheight; yo += imgstep)
         {
-            await processImgPortion(dataFromImage, xo, yo, modelData);
+            await processImgPortion(dataFromImage, xo, yo, model_name);
         }
     }
 
