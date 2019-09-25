@@ -142,7 +142,7 @@ async function runNeuralCompressionCorrection(image_id, scale, model_name)
         {
             modelData_dn4 = await makeRequest("GET", "./g.dn4.onnx"); 
         }
-        modelData = modeData_dn4;
+        modelData = modelData_dn4;
     }
     if(model_name == "dn0")
     {
@@ -150,7 +150,7 @@ async function runNeuralCompressionCorrection(image_id, scale, model_name)
         {
             modelData_dn0 = await makeRequest("GET", "./g.dn0.onnx"); 
         }
-        modelData = modeData_dn0;
+        modelData = modelData_dn0;
     }
     if(model_name == "dn2")
     {
@@ -158,7 +158,7 @@ async function runNeuralCompressionCorrection(image_id, scale, model_name)
         {
             modeData_dn2 = await makeRequest("GET", "./g.dn2.onnx"); 
         }
-        modelData = modeData_dn2;
+        modelData = modelData_dn2;
     }
     var imgid = createImgDisplay();
     var imgtag = document.getElementById(imgid);
