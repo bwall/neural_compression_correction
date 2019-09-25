@@ -1,5 +1,34 @@
 const modelImgSize = 128;
 
+// https://stackoverflow.com/questions/48969495/in-javascript-how-do-i-should-i-use-async-await-with-xmlhttprequest
+function makeRequest(method, url) {
+    return new Promise(function (resolve, reject) {
+        let xhr = new XMLHttpRequest();
+        xhr.open(method, url);
+        xhr.responseType = "arraybuffer";
+        xhr.onload = function () {
+            if (this.status >= 200 && this.status < 300) {
+                resolve(xhr.response);
+            } else {
+                reject({
+                    status: this.status,
+                    statusText: xhr.statusText
+                });
+            }
+        };
+        xhr.onerror = function () {
+            reject({
+                status: this.status,
+                statusText: xhr.statusText
+            });
+        };
+        xhr.send();
+    });
+}
+
+var modelData = "./g.dn4.onnx";
+
+
 async function processImgPortion(imgdata, xo, yo)
 {
     var raw_to_process = new Float32Array(3 * modelImgSize * modelImgSize).fill(0.0);
@@ -23,7 +52,11 @@ async function processImgPortion(imgdata, xo, yo)
     }
 
     const session = new onnx.InferenceSession({ backendHint: 'webgl' });
-    await session.loadModel("./g.dn4.onnx");
+    if(modelData.startsWith("./g."))
+    {
+        modelData = await makeRequest("GET", modelData);   
+    }
+    await session.loadModel(modelData);
     var inputTensor = new onnx.Tensor(to_process.data, 'float32', [3, modelImgSize, modelImgSize]);
     var outputMap = await session.run([inputTensor]);
     var outputData = ndarray(outputMap.values().next().value.data, [3, modelImgSize, modelImgSize]);
