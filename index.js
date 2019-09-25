@@ -26,7 +26,7 @@ function makeRequest(method, url) {
     });
 }
 
-var modelData = "./g.dn4.onnx";
+var modelData = -1;
 
 
 async function processImgPortion(imgdata, xo, yo)
@@ -52,9 +52,9 @@ async function processImgPortion(imgdata, xo, yo)
     }
 
     const session = new onnx.InferenceSession({ backendHint: 'webgl' });
-    if(modelData.startsWith("./g."))
+    if(modelData == -1)
     {
-        modelData = await makeRequest("GET", modelData);   
+        modelData = await makeRequest("GET", "./g.dn4.onnx");   
     }
     await session.loadModel(modelData);
     var inputTensor = new onnx.Tensor(to_process.data, 'float32', [3, modelImgSize, modelImgSize]);
