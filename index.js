@@ -23,7 +23,7 @@ async function processImgPortion(imgdata, xo, yo)
     }
 
     const session = new onnx.InferenceSession({ backendHint: 'webgl' });
-    await session.loadModel("./g.dn0.onnx");
+    await session.loadModel("./g.dn4.onnx");
     var inputTensor = new onnx.Tensor(to_process.data, 'float32', [3, modelImgSize, modelImgSize]);
     var outputMap = await session.run([inputTensor]);
     var outputData = ndarray(outputMap.values().next().value.data, [3, modelImgSize, modelImgSize]);
