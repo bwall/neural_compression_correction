@@ -154,9 +154,9 @@ async function runNeuralCompressionCorrection(image_id, scale, model_name)
     }
     if(model_name == "dn2")
     {
-        if(modeData_dn2 == -1)
+        if(modelData_dn2 == -1)
         {
-            modeData_dn2 = await makeRequest("GET", "./g.dn2.onnx"); 
+            modelData_dn2 = await makeRequest("GET", "./g.dn2.onnx"); 
         }
         modelData = modelData_dn2;
     }
