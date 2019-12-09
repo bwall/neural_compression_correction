@@ -26,11 +26,39 @@ function makeRequest(method, url) {
     });
 }
 
-var modelData = -1;
+var modelData_dn4 = -1;
+var modelData_dn2 = -1;
+var modelData_dn0 = -1;
 
 
-async function processImgPortion(imgdata, xo, yo)
+async function processImgPortion(imgdata, xo, yo, model_name)
 {
+    var modelData = -1;
+    if(model_name == "dn4")
+    {
+        if(modelData_dn4 == -1)
+        {
+            modelData_dn4 = await makeRequest("GET", "./g.dn4.onnx"); 
+        }
+        modelData = modelData_dn4;
+    }
+    if(model_name == "dn0")
+    {
+        if(modelData_dn0 == -1)
+        {
+            modelData_dn0 = await makeRequest("GET", "./g.dn0.onnx"); 
+        }
+        modelData = modelData_dn0;
+    }
+    if(model_name == "dn2")
+    {
+        if(modelData_dn2 == -1)
+        {
+            modelData_dn2 = await makeRequest("GET", "./g.dn2.onnx"); 
+        }
+        modelData = modelData_dn2;
+    }
+    
     var raw_to_process = new Float32Array(3 * modelImgSize * modelImgSize).fill(0.0);
     var to_process = ndarray(raw_to_process, [3, modelImgSize, modelImgSize]);
 
@@ -52,10 +80,7 @@ async function processImgPortion(imgdata, xo, yo)
     }
 
     const session = new onnx.InferenceSession({ backendHint: 'webgl' });
-    if(modelData == -1)
-    {
-        modelData = await makeRequest("GET", "./g.dn4.onnx");   
-    }
+    
     await session.loadModel(modelData);
     var inputTensor = new onnx.Tensor(to_process.data, 'float32', [3, modelImgSize, modelImgSize]);
     var outputMap = await session.run([inputTensor]);
@@ -89,26 +114,52 @@ function createImgDisplay()
     
     var rNCCtag = document.createElement("input");
     rNCCtag.type = "button";
-    rNCCtag.value = "Correct Compression";
-    rNCCtag.onclick = function() {runNeuralCompressionCorrection(imgid, 1);}
+    rNCCtag.value = "Correct Compression (v0)";
+    rNCCtag.onclick = function() {runNeuralCompressionCorrection(imgid, 1, "dn0");}
+    
+    var rNCCtag2 = document.createElement("input");
+    rNCCtag2.type = "button";
+    rNCCtag2.value = "Correct Compression (v2)";
+    rNCCtag2.onclick = function() {runNeuralCompressionCorrection(imgid, 1, "dn2");}
+    
+    var rNCCtag4 = document.createElement("input");
+    rNCCtag4.type = "button";
+    rNCCtag4.value = "Correct Compression (v4) (slow)";
+    rNCCtag4.onclick = function() {runNeuralCompressionCorrection(imgid, 1, "dn4");}
 
     var enhancetag = document.createElement("input");
     enhancetag.type = "button";
-    enhancetag.value = "\"Enhance\"";
-    enhancetag.onclick = function() {runNeuralCompressionCorrection(imgid, 2);}
+    enhancetag.value = "\"Enhance\" (v0)";
+    enhancetag.onclick = function() {runNeuralCompressionCorrection(imgid, 2, "dn0");}
+    
+    var enhancetag2 = document.createElement("input");
+    enhancetag2.type = "button";
+    enhancetag2.value = "\"Enhance\" (v2)";
+    enhancetag2.onclick = function() {runNeuralCompressionCorrection(imgid, 2, "dn2");}
+    
+    var enhancetag4 = document.createElement("input");
+    enhancetag4.type = "button";
+    enhancetag4.value = "\"Enhance\" (v4) (slow)";
+    enhancetag4.onclick = function() {runNeuralCompressionCorrection(imgid, 2, "dn4");}
 
     imgtag.id = imgid;
 
     article.appendChild(imgtag);
     article.appendChild(document.createElement("br"));
     article.appendChild(rNCCtag);
+    article.appendChild(rNCCtag2);
+    article.appendChild(rNCCtag4);
+    
     article.appendChild(enhancetag);
+    article.appendChild(enhancetag2);
+    article.appendChild(enhancetag4);
+    
     maintag.appendChild(article);
 
     return imgid;
 }
 
-async function runNeuralCompressionCorrection(image_id, scale) 
+async function runNeuralCompressionCorrection(image_id, scale, model_name) 
 {
     var imgid = createImgDisplay();
     var imgtag = document.getElementById(imgid);
@@ -133,7 +184,7 @@ async function runNeuralCompressionCorrection(image_id, scale)
     {
         for(var yo = 0; yo < imgheight; yo += imgstep)
         {
-            await processImgPortion(dataFromImage, xo, yo);
+            await processImgPortion(dataFromImage, xo, yo, model_name);
         }
     }
 
